@@ -1,0 +1,119 @@
+format_version: 10
+pipelines:
+  teste-terraform:
+    group: My-Pipelines
+    label_template: ${COUNT}
+    lock_behavior: none
+    display_order: -1
+    materials:
+      git-bda337a:
+        git: https://github.com/ricardo2009/aksgitaction
+        shallow_clone: false
+        auto_update: true
+        branch: main
+    stages:
+    - Autentication:
+        fetch_materials: true
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          azlogin:
+            timeout: 0
+            secure_variables:
+              secret: AES:zFfcaJMum66zg8uCKuPbjQ==:XiDOpCWXws3Abb3KhxM73A==
+            tasks:
+            - exec:
+                arguments:
+                - login
+                - -u
+                - ricardolima@microsoft.com
+                - -p
+                - $secret
+                command: az
+                run_if: passed
+                working_directory: null
+    - Terraform:
+        fetch_materials: true
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          terraform:
+            timeout: 0
+            tasks:
+            - exec:
+                arguments:
+                - init
+                command: terraform
+                run_if: passed
+                working_directory: null
+            - exec:
+                arguments:
+                - plan
+                command: terraform
+                run_if: passed
+                working_directory: null
+            - exec:
+                arguments:
+                - apply
+                - -auto-approve
+                command: terraform
+                run_if: passed
+                working_directory: null
+    - Destroy:
+        fetch_materials: true
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          terraform:
+            timeout: 0
+            tasks:
+            - exec:
+                arguments:
+                - destroy
+                - -auto-approve
+                command: terraform
+                run_if: passed
+                working_directory: null
+    tracking_tool:
+      link: null
+      regex: null
+    environment_variables: []
+    parameters: []
+    timer: null
+    version: 1
+    template: null
+    can_administer: true
+    can_operate: true
+    can_view: true
+    can_compare: true
+    can_trigger: true
+    can_unlock: true
+    can_pause: true
+    can_delete: true
+    can_edit: true
+    can_create_pipeline: true
+    can_create_template: true
+    can_create_environment: true
+    can_create_admin: true
+    can_view_admin: true
+    can_view_template: true
+    can_view_environment: true
+    can_view_pipeline: true
+    can_view_artifact: true
+    can_view_dashboard: true
+    can_view_config: true
+    can_view_config_xml: true
+    can_view_config_repos: true
+    can_view_config_repo: true
+    can_view_artifact_store: true
+    can_view_artifact_stores: true
+    can_view_user: true
